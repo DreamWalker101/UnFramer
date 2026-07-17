@@ -1,43 +1,52 @@
-// UnFramer viewer — example entry.
+// UnFramer viewer — RESPONSIVE whole-page template.
 //
 // Copy this to App.jsx:  cp viewer/src/App.example.jsx viewer/src/App.jsx
-// then point it at your exported output. Two patterns:
 //
-// 1) RECOMMENDED — whole-page component (cleanest layout + order):
-//    In Framer, select the whole page → "Create Component" (e.g. "Whole_Page").
-//      node export.mjs <project> --only "Whole_Page" --out ./page-out
-//    Then in App.jsx:
-//      import '../../page-out/styles.css'
-//      import WholePage from '../../page-out/whole-page'
-//      export default () => (
-//        <div style={{ display: 'flex', justifyContent: 'center' }}><WholePage /></div>
-//      )
+// Strategy: one whole-page component PER Framer breakpoint (full per-instance
+// content fidelity), with only the ACTIVE breakpoint mounted via matchMedia.
+// Mounting all breakpoints at once would run multiple SmoothScroll/lenis
+// instances fighting over scroll — so we swap the mounted component on resize.
 //
-// 2) Auto-generated stitched homepage (individual sections in page order):
-//      node export.mjs <project> --homepage --out ./out
-//      node render-setup.mjs <project> ./out     # writes viewer/src/App.jsx for you
+// 1) In Framer, Create Component from each breakpoint frame of your page:
+//      Whole_Page (desktop), Whole_Page_Tablet, Whole_Page_Phone
+// 2) Export each:
+//      node export.mjs <project> --only "Whole_Page"        --out ./page-out
+//      node export.mjs <project> --only "Whole_Page_Tablet" --out ./page-tablet
+//      node export.mjs <project> --only "Whole_Page_Phone"  --out ./page-phone
+// 3) Point the imports below at each dir, and set BREAKPOINTS to your project's
+//    real thresholds (read them from the exported component's @media queries).
+import { useSyncExternalStore } from 'react'
+import '../../page-out/styles.css'
+
+import Desktop from '../../page-out/whole-page'
+// import Tablet from '../../page-tablet/whole-page-tablet'
+// import Phone  from '../../page-phone/whole-page-phone'
+const Tablet = Desktop // ← replace once Whole_Page_Tablet is exported
+const Phone = Desktop //  ← replace once Whole_Page_Phone is exported
+
+// Framer breakpoint upper bounds (px). Example project: Desktop >=1200,
+// Tablet 810-1199, Phone <=809.
+const BREAKPOINTS = { phone: 809, tablet: 1199 }
+
+function current() {
+    if (typeof window === 'undefined') return 'desktop'
+    const w = window.innerWidth
+    if (w <= BREAKPOINTS.phone) return 'phone'
+    if (w <= BREAKPOINTS.tablet) return 'tablet'
+    return 'desktop'
+}
+const subscribe = (cb) => {
+    window.addEventListener('resize', cb)
+    return () => window.removeEventListener('resize', cb)
+}
+const useBreakpoint = () => useSyncExternalStore(subscribe, current, () => 'desktop')
 
 export default function App() {
+    const bp = useBreakpoint()
+    const Page = bp === 'phone' ? Phone : bp === 'tablet' ? Tablet : Desktop
     return (
-        <div
-            style={{
-                minHeight: '100vh',
-                display: 'grid',
-                placeItems: 'center',
-                fontFamily: 'system-ui, sans-serif',
-                color: '#e7e9f0',
-                background: '#0c0e14',
-                textAlign: 'center',
-                padding: 24,
-            }}
-        >
-            <div style={{ maxWidth: 560 }}>
-                <h1 style={{ fontSize: 28, margin: '0 0 12px', letterSpacing: '-0.02em' }}>UnFramer viewer</h1>
-                <p style={{ color: '#aeb4c4', lineHeight: 1.6 }}>
-                    Copy <code>App.example.jsx</code> → <code>App.jsx</code> and point it at your exported
-                    Framer output. See the README for the two patterns.
-                </p>
-            </div>
+        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', minHeight: '100vh' }}>
+            <Page />
         </div>
     )
 }

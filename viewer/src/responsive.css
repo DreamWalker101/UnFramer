@@ -1,0 +1,24 @@
+/* Breakpoint switching at Framer's EXACT thresholds.
+   Each .bp holds a full whole-page render for one breakpoint; only the one
+   matching the viewport is shown. Centered so fixed-width designs don't pin left. */
+.bp {
+    display: none;
+    width: 100%;
+    justify-content: center;
+}
+.bp > * {
+    flex: 0 0 auto;
+}
+
+/* Phone: <= 809px */
+@media (max-width: 809px) {
+    .bp-phone { display: flex; }
+}
+/* Tablet: 810px - 1199px */
+@media (min-width: 810px) and (max-width: 1199px) {
+    .bp-tablet { display: flex; }
+}
+/* Desktop: >= 1200px */
+@media (min-width: 1200px) {
+    .bp-desktop { display: flex; }
+}
