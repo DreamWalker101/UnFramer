@@ -1,0 +1,32 @@
+{
+  "name": "unframer-diy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Export React (+ framer-motion) from your own Framer project via the official Server API + unframer's open-source bundler. No unframer.co, no paywall.",
+  "bin": {
+    "unframer-diy": "./export.mjs"
+  },
+  "scripts": {
+    "export": "node export.mjs",
+    "static": "node ssr-export.mjs",
+    "dev": "vite --config vite.config.js",
+    "build": "vite build --config vite.config.js",
+    "preview": "vite preview --config vite.config.js"
+  },
+  "dependencies": {
+    "@motionone/dom": "^10.18.0",
+    "framer-api": "^0.1.22",
+    "lenis": "^1.3.25",
+    "react": "^19",
+    "react-dom": "^19",
+    "unframer": "^4.2.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.3",
+    "vite": "^8.1.5"
+  }
+}

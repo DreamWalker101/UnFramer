@@ -1,0 +1,29 @@
+# deps / build output
+node_modules/
+viewer/dist/
+dist/
+
+# exported Framer output — project-specific artifacts, NOT tool code
+out*/
+page-out/
+test-out/
+framer-out/
+static/
+
+# generated viewer entry (regenerated per project via render-setup.mjs)
+viewer/src/App.jsx
+
+# local dumps, logs, scratch/debug scripts
+*.log
+config.json
+probe-css.mjs
+test-bundle.mjs
+instrument.mjs
+regenerate-app.mjs
+.impeccable/
+
+# secrets / env — never commit a Framer API key or session
+.env
+.env.*
+.framer-session
+*.key
